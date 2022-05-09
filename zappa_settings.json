@@ -1,0 +1,14 @@
+{
+    "dev": {
+        "django_settings": "gemini.settings",
+        "profile_name": "default",
+        "project_name": "gemini",
+        "runtime": "python3.9",
+        "s3_bucket": "zappa-zm3ayvkoi",
+        "aws_region": "us-east-2",
+        "vpc_config" : {
+            "SubnetIds": ["subnet-a899abe4", "subnet-1b920e70", "subnet-7901cb04"],
+            "SecurityGroupIds": ["sg-7ff41233"]
+        }
+    }
+}

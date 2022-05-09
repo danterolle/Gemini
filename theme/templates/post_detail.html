@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container m-auto p-8 text-grey-darkest">
+   <h1 class="w-7/12 text-center text-4xl text-yellow-900 mb-4">{{ post.title }}</h1>
+      <div class="container flex mx-auto px-4 md:px-12">
+          <!-- Posts -->
+          <div class="w-7/12">
+              <hr>
+              <div class="mx-1 lg:-mx-4 mt-5">
+                <p class="text-center mb-5">created on {{ post.created_on }} and posted by <strong>{{ post.author }}</strong></p>
+                <a href="{% url 'posts:post_detail' pk=post.pk %}">
+                    <img class="block h-auto w-full rounded" src="{{ MEDIA_URL }}{{ post.image }}">
+                </a>
+                <div class="flex flex-row">
+                <a href="dev/categories" class="my-5 w-1/6 text-center text-yellow-900 bg-yellow-400 hover:bg-yellow-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium font-mono" href="#">
+                   {% for category in post.categories.all %}
+                        {{ category.name }}
+                   {% endfor %}
+                </a>
+                <div class="flex space-x-2 pt-7 pl-5">
+                   <div class="upvote">
+                        <strong class="upvote-count-{{ post.id }}">{{ post.upvote_set.count }}</strong>
+                        <span class="text-yellow-900 hover:text-blue-500">
+                            <i class="fa fa-arrow-up fa-xs upvote-click" data-id="{{ post.id }}"></i>
+                        </span>
+                   </div>
+                   <div class="downvote">
+                       <strong class="downvote-count-{{ post.id }}">{{ post.downvote_set.count }}</strong>
+                        <span class="text-yellow-900 hover:text-red-500">
+                            <i class="fa fa-arrow-down fa-xs downvote-click" data-id="{{ post.id }}"></i>
+                        </span>
+                   </div>
+                </div>
+                </div>
+                <p class="text-2xl mt-5">{{ post.content }}</p>
+                <p class="text-lg mt-10 mb-3">{{ comments.count }} comments</p>
+              </div>
+              <!-- COMMENT COMPONENT -->
+              {% if new_comment %}
+              <!--
+              <div class="container items-center px-5 py-12 lg:px-20">
+                <div class="w-full text-yellow-600 border rounded-lg shadow-xl ">
+                  <div class="flex items-center justify-between px-6 py-4 mx-auto ">
+                    <div class="flex">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="mr-4 icon icon-tabler icon-tabler-alert-triangle" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        <polyline points="11 12 12 12 12 16 13 16"></polyline>
+                      </svg>
+                      <p class="text-sm font-semibold tracking-wide uppercase ">
+                        <strong>Warning:</strong> Your comment is awaiting moderation.
+                      </p>
+                    </div>
+                    <button class="p-1 transition-colors duration-200 transform rounded-md hover:bg-opacity-25 hover:bg-blueGray-600 focus:outline-none" type="button" aria-label="Close" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M10 10l4 4m0 -4l-4 4"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              -->
+              {% else %}
+                <!-- comment form -->
+                {% if user.is_authenticated %}
+                  <p class="pt-3 pb-2 text-red-900 text-3xl">Leave a comment</p>
+                   <form class="w-2/4" method="POST">
+                      {% csrf_token %}
+                      {{ comment_form|crispy }}
+                      <button class="inline-flex px-16 py-3 text-red-900 hover:text-white transition duration-500 ease-in-out transform bg-yellow-500 rounded-lg shadow-xl hover:bg-yellow-900 focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-yellow-500 ring-offset-current ring-offset-2">Post a comment</button>
+                   </form>
+                  {% else %}
+                  <h2 class="text-center pt-3 pb-2 text-red-900 text-2xl">Would you like to leave a comment?</h2>
+                  <div class="flex justify-center mt-3">
+                      <a href="../../signup">
+                          <button class="text-center mx-5 text-yellow-900 bg-yellow-400 hover:bg-yellow-800 hover:text-white block px-4 py-2 rounded-md text-base font-medium font-mono">
+                              Signup
+                          </button>
+                      </a>
+                      <a href="../../login">
+                          <button class="text-center mx-5 text-yellow-900 bg-yellow-400 hover:bg-yellow-800 hover:text-white block px-4 py-2 rounded-md text-base font-medium font-mono">
+                              Login
+                          </button>
+                      </a>
+                  </div>
+                {% endif %}
+              {% endif %}
+              {% for comment in comments %}
+              <div class="container object-left py-2">
+                <div class="p-2 my-2 bg-white border rounded-lg shadow-xl">
+                  <div class="flex-grow py-2 rounded-lg">
+                    <p class="ml-3 mb-3 text-base leading-relaxed text-yellow-900">{{ user }} commented on {{ comment.created_on }}</p>
+                    <p class="mr-3 mb-3 text-base leading-relaxed text-yellow-500">{{ comment.body|linebreaks }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+          </div>
+          <!-- Top Categories -->
+          <div class="w-5/12 ml-5">
+              <div class="w-1/2 mx-auto">
+              <h2 class="flex justify-center text-3xl mt-5 mx-auto">Top 5 Categories</h2>
+              {% for category in categories.all|slice:":5" %}
+              <a href="dev/categories">
+                  <button class="w-5/6 text-center my-10 mx-5 text-yellow-900 bg-yellow-400 hover:bg-yellow-800 hover:text-white block px-4 py-2 rounded-md text-base font-medium font-mono">
+                      {{ category }} - {{ category.posts_count }} posts
+                  </button>
+              </a>
+              {% endfor %}
+              </div>
+          </div>
+      </div>
+</div>
+
+<div class="footer mt-40" style="display: block; box-sizing: border-box; height: 200px; background-color: #e19223; clip-path: ellipse(90% 100% at 50% 100%);">
+</div>
+{% endblock %}

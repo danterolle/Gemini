@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container m-auto p-8 text-grey-darkest">
+   <!-- <h1 class="text-center text-5xl text-yellow-900 mb-8">Welcome to Gemini</h1> -->
+      <div class="container flex my-12 mx-auto px-4 md:px-12">
+          <!-- Posts -->
+          <div class="w-7/12">
+              <div class="flex flex-wrap -mx-1 lg:-mx-4">
+                {% for post in posts %}
+                   <div class="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/2">
+                       <article class="overflow-hidden rounded-lg shadow-lg">
+                           <a href="{% url 'posts:post_detail' pk=post.pk %}">
+                               <img class="block h-auto w-full" src="{{ MEDIA_URL }}{{ post.image }}">
+                           </a>
+                           <header class="flex items-center justify-between leading-tight p-2 md:p-4">
+                               <h1 class="text-lg">
+                                   <a class="no-underline text-yellow-900 hover:text-yellow-700" href="{% url 'posts:post_detail' pk=post.pk %}">
+                                      {{ post.title }}
+                                   </a>
+                                   <div class="flex space-x-2">
+                                       <div class="upvote">
+                                            <strong class="upvote-count-{{ post.id }}">{{ post.upvote_set.count }}</strong>
+                                            <span class="text-yellow-900 hover:text-blue-500">
+                                                <i class="fa fa-arrow-up fa-xs upvote-click" data-id="{{ post.id }}"></i>
+                                            </span>
+                                       </div>
+                                       <div class="downvote">
+                                           <strong class="downvote-count-{{ post.id }}">{{ post.downvote_set.count }}</strong>
+                                            <span class="text-yellow-900 hover:text-red-500">
+                                                <i class="fa fa-arrow-down fa-xs downvote-click" data-id="{{ post.id }}"></i>
+                                            </span>
+                                       </div>
+                                    </div>
+                               </h1>
+                               <p class="text-grey-darker text-sm">
+                                   {{ post.created_on }}
+                               </p>
+                           </header>
+                           <div class="flex items-center justify-between leading-tight px-2 md:px-4">
+                               <p class="text-grey-darker text-sm">
+                                   {{ post.content|safe|truncatewords:"10" }}
+                                   {% if post.content|safe|truncatewords:"10"|length > 20 %}
+                                   <a href="{% url 'posts:post_detail' pk=post.pk %}" class="text-yellow-900">read more</a>
+                                   {% else %}
+
+                                   {% endif %}
+                               </p>
+                           </div>
+                           <footer class="flex items-center justify-between leading-none p-2 md:p-4">
+                               <a class="flex items-center no-underline hover:underline text-black" href="#">
+                                   <img class="block w-5 h-auto rounded-full" src="{{ MEDIA_URL }}/profile.png" style="border: 2px solid #1e90ff">
+                                   <p class="ml-2 text-sm">
+                                       {{ post.author }}
+                                   </p>
+                               </a>
+                               <a href="dev/categories" class="text-yellow-900 bg-yellow-400 hover:bg-yellow-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium font-mono" href="#">
+                                   <span class="block">
+                                       <!--
+                                       {% for category in category %}
+                                            {% if category.slug == post.slug %}
+                                                {{ category.slug }}
+                                            {% endif %}
+                                       {% endfor %}
+                                       -->
+                                       {% for category in post.categories.all %}
+                                            {{ category.name }}
+                                       {% endfor %}
+                                   </span>
+                               </a>
+                           </footer>
+                       </article>
+                   </div>
+                {% endfor %}
+              </div>
+          </div>
+          <!-- Top Posts -->
+          <div class="w-5/12 ml-5">
+              <h2 class="text-center text-3xl my-5">Popular Posts</h2>
+              <div class="flex flex-wrap -mx-1 lg:-mx-4">
+                {% for post in posts|slice:":4" %}
+                  {% if post.comments.count > 3 %}
+                   <div class="my-2 px-1 w-full mx-24">
+                       <article class="overflow-hidden rounded-lg shadow-lg">
+                           <a href="{% url 'posts:post_detail' pk=post.pk %}">
+                               <img class="block h-auto w-full" src="{{ MEDIA_URL }}{{ post.image }}">
+                           </a>
+                           <header class="flex items-center justify-between leading-tight p-2 md:p-4">
+                               <h1 class="text-lg">
+                                   <a class="no-underline text-yellow-900 hover:text-yellow-700" href="{% url 'posts:post_detail' pk=post.pk %}">
+                                      {{ post.title }}
+                                   </a>
+                                   <div class="flex space-x-2">
+                                        <div class="upvote">
+                                            <strong class="upvote-count-{{ post.id }}">{{ post.upvote_set.count }}</strong>
+                                            <span class="text-yellow-900 hover:text-blue-500">
+                                                <i class="fa fa-arrow-up fa-xs upvote-click" data-id="{{ post.id }}"></i>
+                                            </span>
+                                        </div>
+                                       <div class="downvote">
+                                           <strong class="downvote-count-{{ post.id }}">{{ post.downvote_set.count }}</strong>
+                                            <span class="text-yellow-900 hover:text-red-500">
+                                                <i class="fa fa-arrow-down fa-xs downvote-click" data-id="{{ post.id }}"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                               </h1>
+                               <p class="text-grey-darker text-sm">
+                                   {{ post.created_on }}
+                               </p>
+                           </header>
+                           <div class="flex items-center justify-between leading-tight px-2 md:px-4">
+                               <p class="text-grey-darker text-sm">
+                                   {{ post.content|safe|truncatewords:"10" }}
+                                   {% if post.content|safe|truncatewords:"10"|length > 20 %}
+                                   <a href="{% url 'posts:post_detail' pk=post.pk %}" class="text-yellow-900">read more</a>
+                                   {% else %}
+
+                                   {% endif %}
+                               </p>
+                           </div>
+                           <footer class="flex items-center justify-between leading-none p-2 md:p-4">
+                               <a class="flex items-center no-underline hover:underline text-black" href="#">
+                                   <img class="block w-5 h-auto rounded-full" src="{{ MEDIA_URL }}/profile.png" style="border: 2px solid #1e90ff">
+                                   <p class="ml-2 text-sm">
+                                       {{ post.author }}
+                                   </p>
+                               </a>
+                               <a class="text-yellow-900 bg-yellow-400 hover:bg-yellow-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium font-mono" href="#">
+                                   <span class="block">
+                                       <!--
+                                       {% for category in category %}
+                                            {% if category.slug == post.slug %}
+                                                {{ category.slug }}
+                                            {% endif %}
+                                       {% endfor %}
+                                       -->
+                                       {% for category in post.categories.all %}
+                                            {{ category.name }}
+                                       {% endfor %}
+                                   </span>
+                               </a>
+                               <!-- <a class="no-underline text-grey-darker hover:text-red-dark" href="#">
+                                   <span class="block">Upvote</span>
+                                   <i class="fa fa-heart"></i>
+                               </a> -->
+                           </footer>
+                       </article>
+                   </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+          </div>
+      </div>
+</div>
+<!-- Paginator -->
+  <!-- Mobile -->
+<div class="bg-yellow-200 px-4 py-3 flex items-center justify-between border-t border-yellow-200 sm:px-6">
+  <div class="flex-1 flex justify-between sm:hidden">
+    {% if posts.has_previous %}
+    <a href="?page={{ posts.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-yellow-600 text-sm font-medium rounded-md text-yellow-900 bg-white hover:text-gray-500">
+      Previous
+    </a>
+    {% endif %}
+    {% if posts.has_next %}
+    <a href="?page={{ posts.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-yellow-600 text-sm font-medium rounded-md text-yellow-900 bg-white hover:text-gray-500">
+      Next
+    </a>
+    {% endif %}
+  </div>
+  <!-- Desktop -->
+  <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+    <div>
+      <p class="text-sm text-gray-700">Total posts: {{ posts.paginator.count }}</p>
+    </div>
+    <div>
+      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+        {% if posts.has_previous %}
+        <a href="?page={{ posts.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-yellow-500 bg-white text-sm font-medium text-yellow-900 hover:bg-gray-50">
+          <span class="sr-only">Previous</span>
+          <!-- left icon -->
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        {% endif %}
+
+        {% for n in posts.paginator.page_range %}
+          {% if posts.number == n %}
+            <a class="relative inline-flex items-center px-4 py-2 border border-yellow-500 bg-yellow-400 text-sm font-medium text-yellow-900">
+              {{ n }}
+            </a>
+          {% elif n > posts.number|add:'-4' and n < posts.number|add:'4' %}
+            <a href="?page={{ n }}" class="relative inline-flex items-center px-4 py-2 border border-yellow-500 bg-white text-sm font-medium text-yellow-900 hover:bg-gray-50">
+              {{ n }}
+            </a>
+          {% endif %}
+        {% endfor %}
+
+        {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-yellow-500 bg-white text-sm font-medium text-yellow-900 hover:bg-gray-50">
+          <span class="sr-only">Next</span>
+          <!-- right icon -->
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        {% endif %}
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        // UpVote
+        $(".upvote-click").on('click',function() {
+            var post_id = $(this).data("id");
+            // Using ajax for real-time output
+            $.ajax({
+                url: "dev/save-upvote",
+                type: "post",
+                data: {
+                    postid: post_id,
+                    csrfmiddlewaretoken: "{{csrf_token}}"
+                },
+                dataType: 'json',
+                success: function(res) {
+                    var prev_upvote=$(".upvote-count-" + post_id).text();
+                    if (res.bool == true) {
+                        $(".upvote-count-" + post_id).text(parseInt(prev_upvote) + 1);
+                    }
+                }
+            });
+        });
+
+        // DownVote
+        $(".downvote-click").on('click',function() {
+            var post_id = $(this).data("id");
+            // Using ajax for real-time output
+            $.ajax({
+                url: "dev/save-downvote",
+                type: "post",
+                data: {
+                    postid: post_id,
+                    csrfmiddlewaretoken: "{{csrf_token}}"
+                },
+                dataType: 'json',
+                success: function(res) {
+                    var prev_downvote=$(".downvote-count-" + post_id).text();
+                    if (res.bool == true) {
+                        $(".downvote-count-" + post_id).text(parseInt(prev_downvote) + 1);
+                    }
+                }
+            });
+        });
+
+    });
+</script>
+
+{% endblock %}

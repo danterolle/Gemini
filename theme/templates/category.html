@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-10 text-2xl font-semibold tracking-tighter text-black sm:text-3xl title-font">
+    Categories
+</h1>
+  <section>
+    <div class="flex flex-row container px-5 py-8 lg:px-20">
+        {% for category in categories %}
+          <div class="flex flex-wrap flex-row w-full">
+            <div class="flex flex-row w-full xl:w-1/4 md:w-2/6 py-5">
+              <div class="flex flex-row py-4 px-5 transition duration-500 ease-in-out transform bg-yellow-100 border rounded-lg shadow-xl">
+                <a class="text-center w-full px-10 py-5 text-base font-medium text-yellow-800 transition duration-500 ease-in-out transform bg-yellow-400 rounded-lg hover:bg-red-900 hover:text-yellow-300 focus:shadow-outline focus:outline-none focus:ring-2 ring-offset-current ring-offset-2">
+                   {{ category }}
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+  </section>
+{% endblock %}
